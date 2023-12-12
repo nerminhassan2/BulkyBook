@@ -38,5 +38,24 @@ namespace Bulky.Controllers
             return View();
             //if different controller write return RedirectToAction("Index", "name of the controller");
         }
+
+        public IActionResult Edit(int id)
+        {
+            Category? foundCategory = _db.Categories.Find(id); //find only work for primary key
+            //Category? foundCategory1 = _db.Categories.FirstOrDefault(u => u.CategoryId == id); //other way to get a category with specific id
+            return View(foundCategory);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(category);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
     }
 }
