@@ -19,5 +19,6 @@ namespace BulkyWebRazor.Pages.Categories
         {
             CategoryList = _db.Categories.ToList();
         }
+
     }
 }
