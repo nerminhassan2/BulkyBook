@@ -57,5 +57,17 @@ namespace Bulky.Controllers
             }
             return View();
         }
+
+        public IActionResult Delete(int id)
+        {
+            Category? foundCategory = _db.Categories.Find(id);
+            if (foundCategory == null)
+            {
+                return NotFound();
+            } 
+            _db.Categories.Remove(foundCategory);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
