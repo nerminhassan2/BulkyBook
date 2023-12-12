@@ -20,6 +20,8 @@ namespace Bulky.Controllers
         public IActionResult Create()
         {
             return View();
+            //it can be written like that
+            //return View(new Category);
         }
 
         [HttpPost]
