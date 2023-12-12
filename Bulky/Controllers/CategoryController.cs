@@ -33,6 +33,7 @@ namespace Bulky.Controllers
             {
                 _db.Categories.Add(category);
                 _db.SaveChanges();
+                TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -53,6 +54,7 @@ namespace Bulky.Controllers
             {
                 _db.Categories.Update(category);
                 _db.SaveChanges();
+                TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -64,7 +66,8 @@ namespace Bulky.Controllers
             if (foundCategory == null)
             {
                 return NotFound();
-            } 
+            }
+            TempData["success"] = "Category deleted successfully";
             _db.Categories.Remove(foundCategory);
             _db.SaveChanges();
             return RedirectToAction("Index");
