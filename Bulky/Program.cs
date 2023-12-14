@@ -11,8 +11,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//So when I run the application CategoryController knows that CategoryRepository is the implementation for ICategoryRepository
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+//So when I run the application Controller knows that UnitOfWork is the implementation for IUnitOfWork
+//Ex:CategoryController knows that CategoryRepository is the implementation for ICategoryRepository
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
