@@ -1,3 +1,5 @@
+using Bulky.DataAccess.Repository.IRepository;
+using Bulky.DataAccess.Repository;
 using Bulky.DtaAccess.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,9 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//So when I run the application CategoryController knows that CategoryRepository is the implementation for ICategoryRepository
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 
