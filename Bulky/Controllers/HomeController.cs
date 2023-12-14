@@ -15,8 +15,7 @@ namespace Bulky.Controllers
 
         public IActionResult Index()
         {
-            return Ok(_logger);
-            //return View();
+            return View();
         }
 
         public IActionResult Privacy()
