@@ -72,16 +72,42 @@ namespace Bulky.Areas.Admin.Controllers
         public IActionResult Edit(int id)
         {
             Product foundProduct = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
-            return View(foundProduct);
+
+            ProductVM productVM = new()
+            {
+                CategoryList = _unitOfWork.CategoryRepository.GetAll().
+                    Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.CategoryId.ToString()
+                    }),
+
+                 Product = foundProduct
+             };
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(ProductVM productVM)
         {
-            _unitOfWork.ProductRepository.Update(product);
-            _unitOfWork.Save();
-            TempData["success"] = "Product Updated successfully";
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.ProductRepository.Update(productVM.Product);
+                _unitOfWork.Save();
+                TempData["success"] = "Product Updated successfully";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                productVM.CategoryList = _unitOfWork.CategoryRepository.GetAll().
+                    Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.CategoryId.ToString()
+                    });
+
+                return View(productVM);
+            }
         }
 
         public IActionResult Delete(int id)
