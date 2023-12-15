@@ -49,6 +49,15 @@ namespace Bulky.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Delete(int id)
+        {
+            Product foundProduct = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
+            _unitOfWork.ProductRepository.Remove(foundProduct);
+            _unitOfWork.Save();
+            TempData["success"] = "Product deleted successfully";
+            return RedirectToAction("Index");
+        }
+
 
     }
 }
