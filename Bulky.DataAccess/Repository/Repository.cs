@@ -29,7 +29,7 @@ namespace Bulky.DataAccess.Repository
 
         public IEnumerable<T> GetAll()
         {
-            return dbSet.ToList();
+            return dbSet;
         }
 
         public void Remove(T entity)
