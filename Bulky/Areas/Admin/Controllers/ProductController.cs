@@ -34,6 +34,21 @@ namespace Bulky.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Edit(int id)
+        {
+            Product foundProduct = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
+            return View(foundProduct);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Product product)
+        {
+            _unitOfWork.ProductRepository.Update(product);
+            _unitOfWork.Save();
+            TempData["success"] = "Product Updated successfully";
+            return RedirectToAction("Index");
+        }
+
 
     }
 }
