@@ -1,5 +1,6 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
@@ -24,24 +25,48 @@ namespace Bulky.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.CategoryRepository.GetAll().
-            Select(u => new SelectListItem
+            ProductVM productVM = new()
             {
-                Text = u.Name,
-                Value = u.CategoryId.ToString()
-            });
-            ViewBag.CategoryList = CategoryList;
+                CategoryList = _unitOfWork.CategoryRepository.GetAll().
+                    Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.CategoryId.ToString()
+                    }),
+
+                Product = new Product()
+            };
+            return View(productVM);
+
+            //CategoryList is temporary data that is not in a model so I can't pass it directly to the View()!!!
             //ViewBag transfer data from controller to view
-            return View();
+            //ViewBag.CategoryList = CategoryList;
+
+            //ViewData["CategoryList"] = CategoryList;
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductVM productVM)
         {
-            _unitOfWork.ProductRepository.Add(product);
-            _unitOfWork.Save();
-            TempData["success"] = "Product Created successfully";
-            return RedirectToAction("Index");
+            if(ModelState.IsValid)
+            {
+                _unitOfWork.ProductRepository.Add(productVM.Product);
+                _unitOfWork.Save();
+                TempData["success"] = "Product Created successfully";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                productVM.CategoryList = _unitOfWork.CategoryRepository.GetAll().
+                    Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.CategoryId.ToString()
+                    });
+
+                return View(productVM);
+            }
+
         }
 
         public IActionResult Edit(int id)
