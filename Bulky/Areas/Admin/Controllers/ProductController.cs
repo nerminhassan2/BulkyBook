@@ -20,7 +20,19 @@ namespace Bulky.Areas.Admin.Controllers
             return View(products);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult Create(Product product)
+        {
+            _unitOfWork.ProductRepository.Add(product);
+            _unitOfWork.Save();
+            TempData["success"] = "Product Created successfully";
+            return RedirectToAction("Index");
+        }
 
 
     }
