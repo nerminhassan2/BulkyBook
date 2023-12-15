@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Bulky.DtaAccess.Migrations
+namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231215142134_CreateAndSeedProductTable")]
+    [Migration("20231215210443_CreateAndSeedProductTable")]
     partial class CreateAndSeedProductTable
     {
         /// <inheritdoc />
@@ -56,6 +56,12 @@ namespace Bulky.DtaAccess.Migrations
                             CategoryId = 2,
                             Name = "Cat 2",
                             displayOrder = 2
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Cat 3",
+                            displayOrder = 3
                         });
                 });
 
@@ -70,6 +76,9 @@ namespace Bulky.DtaAccess.Migrations
                     b.Property<string>("Author")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -97,13 +106,16 @@ namespace Bulky.DtaAccess.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.ToTable("products");
+                    b.HasIndex("CategoryID");
+
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             ProductId = 1,
                             Author = "Billy Spark",
+                            CategoryID = 3,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "SWD9999001",
                             ListPrice = 99.0,
@@ -116,6 +128,7 @@ namespace Bulky.DtaAccess.Migrations
                         {
                             ProductId = 2,
                             Author = "Nancy Hoover",
+                            CategoryID = 1,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "CAW777777701",
                             ListPrice = 40.0,
@@ -128,6 +141,7 @@ namespace Bulky.DtaAccess.Migrations
                         {
                             ProductId = 3,
                             Author = "Julian Button",
+                            CategoryID = 3,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "RITO5555501",
                             ListPrice = 55.0,
@@ -140,6 +154,7 @@ namespace Bulky.DtaAccess.Migrations
                         {
                             ProductId = 4,
                             Author = "Abby Muscles",
+                            CategoryID = 2,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WS3333333301",
                             ListPrice = 70.0,
@@ -152,6 +167,7 @@ namespace Bulky.DtaAccess.Migrations
                         {
                             ProductId = 5,
                             Author = "Ron Parker",
+                            CategoryID = 2,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "SOTJ1111111101",
                             ListPrice = 30.0,
@@ -164,6 +180,7 @@ namespace Bulky.DtaAccess.Migrations
                         {
                             ProductId = 6,
                             Author = "Laura Phantom",
+                            CategoryID = 1,
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "FOT000000001",
                             ListPrice = 25.0,
@@ -172,6 +189,17 @@ namespace Bulky.DtaAccess.Migrations
                             Price50 = 22,
                             Title = "Leaves and Wonders"
                         });
+                });
+
+            modelBuilder.Entity("Bulky.Models.Product", b =>
+                {
+                    b.HasOne("Bulky.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

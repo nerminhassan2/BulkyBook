@@ -2,15 +2,17 @@
 using Bulky.DtaAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Bulky.DtaAccess.Migrations
+namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231209215801_addCategoriesTableToDb")]
-    partial class addCategoriesTableToDb
+    [Migration("20231215205819_CreateAndSeedCategoryTable")]
+    partial class CreateAndSeedCategoryTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +34,8 @@ namespace Bulky.DtaAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("displayOrder")
                         .HasColumnType("int");
@@ -40,6 +43,26 @@ namespace Bulky.DtaAccess.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Cat 1",
+                            displayOrder = 1
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Cat 2",
+                            displayOrder = 2
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Cat 3",
+                            displayOrder = 3
+                        });
                 });
 #pragma warning restore 612, 618
         }

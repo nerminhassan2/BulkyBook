@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bulky.Models
 {
@@ -34,6 +35,10 @@ namespace Bulky.Models
         [Display(Name = "Price for 100+")]
         [Range(1, 1000)]
         public int Price100 { get; set; }
+
+        public int CategoryID { get; set; }
+        [ForeignKey("CategoryID")]
+        public Category Category { get; set; }
 
     }
 }
