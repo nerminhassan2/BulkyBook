@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Bulky.Models
 {
@@ -39,6 +40,8 @@ namespace Bulky.Models
         public int CategoryID { get; set; }
         [ForeignKey("CategoryID")]
         public Category Category { get; set; }
+
+        public string ImageURL { get; set; }
 
     }
 }
