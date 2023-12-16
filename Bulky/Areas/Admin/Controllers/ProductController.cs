@@ -36,21 +36,17 @@ namespace Bulky.Areas.Admin.Controllers
                         Text = u.Name,
                         Value = u.CategoryId.ToString()
                     }),
-
-                Product = new Product()
             };
 
+            //Create
             if (id == null || id == 0)
             {
-                //Create
+                productVM.Product = new Product();
                 return View(productVM);
             }
-            else
-            {
-                //update
-                productVM.Product = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
-                return View(productVM);
-            }
+            //update
+            productVM.Product = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
+            return View(productVM);
 
         }
 
@@ -65,16 +61,37 @@ namespace Bulky.Areas.Admin.Controllers
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"Images\Product");
 
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    //update case
+                    if (!string.IsNullOrEmpty(productVM.Product.ImageURL))
+                    {
+                        //delete old image
+                        var oldImagePath = 
+                            Path.Combine(wwwRootPath, productVM.Product.ImageURL.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldImagePath))
+                            System.IO.File.Delete(oldImagePath);
+                    }
+
+                    using (var fileStream = 
+                        new FileStream( Path.Combine(productPath, fileName), FileMode.Create) )
                     {
                         file.CopyTo(fileStream);
                     }
 
                     productVM.Product.ImageURL = @"\Images\Product\" + fileName;
                 }
-                _unitOfWork.ProductRepository.Add(productVM.Product);
+
+                if (productVM.Product.ProductId == 0) //Create
+                {
+                    _unitOfWork.ProductRepository.Add(productVM.Product);
+                    TempData["success"] = "Product Created successfully";
+                }
+                else //Update
+                {
+                    _unitOfWork.ProductRepository.Update(productVM.Product);
+                    TempData["success"] = "Product Updated successfully";
+                }
                 _unitOfWork.Save();
-                TempData["success"] = "Product Created successfully";
                 return RedirectToAction("Index");
             }
             else
