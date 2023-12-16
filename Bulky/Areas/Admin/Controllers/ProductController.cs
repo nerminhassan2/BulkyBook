@@ -3,7 +3,6 @@ using Bulky.Models;
 using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 
 namespace Bulky.Areas.Admin.Controllers
 {
@@ -23,7 +22,7 @@ namespace Bulky.Areas.Admin.Controllers
             return View(products);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
             ProductVM productVM = new()
             {
@@ -36,17 +35,23 @@ namespace Bulky.Areas.Admin.Controllers
 
                 Product = new Product()
             };
-            return View(productVM);
 
-            //CategoryList is temporary data that is not in a model so I can't pass it directly to the View()!!!
-            //ViewBag transfer data from controller to view
-            //ViewBag.CategoryList = CategoryList;
+            if (id == null || id == 0)
+            {
+                //Create
+                return View(productVM);
+            }
+            else
+            {
+                //update
+                productVM.Product = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
+                return View(productVM);
+            }
 
-            //ViewData["CategoryList"] = CategoryList;
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
@@ -67,47 +72,6 @@ namespace Bulky.Areas.Admin.Controllers
                 return View(productVM);
             }
 
-        }
-
-        public IActionResult Edit(int id)
-        {
-            Product foundProduct = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
-
-            ProductVM productVM = new()
-            {
-                CategoryList = _unitOfWork.CategoryRepository.GetAll().
-                    Select(u => new SelectListItem
-                    {
-                        Text = u.Name,
-                        Value = u.CategoryId.ToString()
-                    }),
-
-                 Product = foundProduct
-             };
-            return View(productVM);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(ProductVM productVM)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.ProductRepository.Update(productVM.Product);
-                _unitOfWork.Save();
-                TempData["success"] = "Product Updated successfully";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                productVM.CategoryList = _unitOfWork.CategoryRepository.GetAll().
-                    Select(u => new SelectListItem
-                    {
-                        Text = u.Name,
-                        Value = u.CategoryId.ToString()
-                    });
-
-                return View(productVM);
-            }
         }
 
         public IActionResult Delete(int id)
