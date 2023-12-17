@@ -26,7 +26,7 @@ namespace Bulky.Areas.Admin.Controllers
             return View(products);
         }
 
-        public IActionResult Upsert(int? id)
+        public IActionResult Upsert(int? productId)
         {
             ProductVM productVM = new()
             {
@@ -39,13 +39,13 @@ namespace Bulky.Areas.Admin.Controllers
             };
 
             //Create
-            if (id == null || id == 0)
+            if (productId == null || productId == 0)
             {
                 productVM.Product = new Product();
                 return View(productVM);
             }
             //update
-            productVM.Product = _unitOfWork.ProductRepository.Get(u => u.ProductId == id);
+            productVM.Product = _unitOfWork.ProductRepository.Get(u => u.ProductId == productId);
             return View(productVM);
 
         }
@@ -116,6 +116,17 @@ namespace Bulky.Areas.Admin.Controllers
             TempData["success"] = "Product deleted successfully";
             return RedirectToAction("Index");
         }
+
+        #region API CALLS
+
+        [HttpGet]
+        public IActionResult GetALL() 
+        {
+            List<Product> products = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
+            return Json(new {data = products});
+        }
+
+        #endregion
 
 
     }
